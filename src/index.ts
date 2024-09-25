@@ -2,6 +2,9 @@ import express from 'express'
 import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import Cliente from './model/cliente'
+import cors from 'cors'
+
+console.clear()
 
 const app = express()
 app.use(bodyParser.json())
@@ -13,9 +16,7 @@ mongoose.connect(MONGODB_URI)
     .then(() => console.log("MongoDB conectado!"))
     .catch(err => console.log("Erro ao conectar ao MongoDB", err))
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`)
-})
+app.use(cors())
 
 app.post('/clientes', async (req, res) => {
     const { nome, email } = req.body
@@ -56,4 +57,8 @@ app.delete('/clientes/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Erro ao deletar cliente' })
     }
+})
+
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`)
 })
