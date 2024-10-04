@@ -11,7 +11,7 @@ const app = express()
 app.use(bodyParser.json())
 
 const PORT = 4444
-const MONGODB_URI = "mongodb+srv://root:root@fatec.e8bszzd.mongodb.net/?retryWrites=true&w=majority&appName=fatec"
+const MONGODB_URI = "mongodb+srv://root:root@fatec.typea.mongodb.net/?retryWrites=true&w=majority&appName=fatec"
 
 mongoose.connect(MONGODB_URI)
     .then(() => console.log("MongoDB conectado!"))
