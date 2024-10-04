@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import bodyParser from 'body-parser'
 import Cliente from './model/cliente'
 import cors from 'cors'
+import Livro from './model/livro'
 
 console.clear()
 
@@ -17,6 +18,8 @@ mongoose.connect(MONGODB_URI)
     .catch(err => console.log("Erro ao conectar ao MongoDB", err))
 
 app.use(cors())
+
+// Clientes
 
 app.post('/clientes', async (req, res) => {
     const { nome, email } = req.body
@@ -56,6 +59,58 @@ app.delete('/clientes/:id', async (req, res) => {
         res.status(204).send()
     } catch (error) {
         res.status(500).json({ error: 'Erro ao deletar cliente' })
+    }
+})
+
+// Livros
+
+app.post('/livros', async (req, res) => {
+    try {
+        const novoLivro = new Livro({
+            titulo: req.body.titulo,
+            autor: req.body.autor,
+            ano: req.body.ano
+        })
+        const livroSalvo = await novoLivro.save()
+        res.status(201).json(livroSalvo)
+    } catch (error) {
+        res.status(500).json({ message: "Erro ao cadastrar livro" })
+    }
+})
+
+app.get("/livros", async (req, res) => {
+    try {
+        const livros = await Livro.find()
+        res.json(livros)
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao buscar livros" })
+    }
+})
+
+app.put("/livros/:id", async (req, res) => {
+    const { id } = req.params
+    const { titulo, autor, anoPublicado } = req.body
+    try {
+        const livroAtualizado = await Livro.findByIdAndUpdate(id, { titulo, autor, anoPublicado }, { new: true })
+        if (!livroAtualizado) {
+            return res.status(404).json({ error: "Livro não encontrado" })
+        }
+        res.json(livroAtualizado)
+    } catch (error) {
+        res.status(400).json({ error: "Erro ao atualizar livro" })
+    }
+})
+
+app.delete("/livros/:id", async (req, res) => {
+    const { id } = req.params
+    try {
+        const livroDeletado = await Livro.findByIdAndDelete(id)
+        if (!livroDeletado) {
+            return res.status(404).json({ error: "Livro não encontrado" })
+        }
+        res.status(204).send()
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao deletar livro" })
     }
 })
 
